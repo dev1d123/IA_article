@@ -1,0 +1,47 @@
+# Archivos auxiliares de LaTeX
+*.aux
+*.bbl
+*.blg
+*.brf
+*.dvi
+*.idx
+*.ilg
+*.ind
+*.lof
+*.log
+*.lot
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+*.synctex
+*.run.xml
+*.bcf
+*.blg
+*.bbl
+
+# Archivos generados por herramientas de compilación
+*.pdf
+*.ps
+*.eps
+*.dvi
+
+# Directorios de construcción
+build/
+_output/
+tmp/
+
+# Archivos específicos de Overleaf / colaboración
+*.shared
+*.tex.bak
+*.swp
+*.swo
+*~
+
+# Opcional: si usas IDE como VS Code, incluye .vscode/
+.vscode/
+.idea/
