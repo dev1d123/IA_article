@@ -93,19 +93,20 @@ Finalmente, Li et al. \cite{Li2025} abordaron la necesidad de modelos interpreta
 
 A continuación, se presenta un resumen comparativo de los trabajos analizados (Tabla \ref{tab:resumen}) y la identificación de la brecha de investigación.
 
-\begin{table*}[t]
+\begin{table}[h!]
 \centering
 \caption{Resumen comparativo de trabajos relacionados.}
 \label{tab:resumen}
-\begin{tabular}{|l|l|l|l|}
+\footnotesize
+\begin{tabular}{|p{1.3cm}|p{1.6cm}|p{1.7cm}|p{1.7cm}|}
 \hline
-\textbf{Referencia} & \textbf{Técnica Principal} & \textbf{Aportes} & \textbf{Limitaciones} \\
+\textbf{Ref.} & \textbf{Técnica} & \textbf{Aportes} & \textbf{Limitaciones} \\
 \hline
 Dutta2022 & Ensamble Pesado & Nuevo dataset de Bangladesh & Precisión moderada \\
 \hline
 Joshi2021 & Regresión Logística & Análisis de interacciones & Pocos predictores \\
 \hline
-Wang2021 & Random Forest + SMOTE & Balanceo de fronteras & Sin historia familiar \\
+Wang2021 & RF + SMOTE & Balanceo de fronteras & Sin historia familiar \\
 \hline
 Ren2024 & CatBoost + SMOTE & Selección Chi-cuadrado & Baja precisión en test \\
 \hline
@@ -119,10 +120,10 @@ Hasan2020 & Ensamble (AUC-weight) & Robustez ante desbalance & Estandarización 
 \hline
 Gundogdu2023 & MLR + XGBoost & Rapidez diagnóstica & Dataset muy pequeño \\
 \hline
-Abnoosian2023 & Multi-clasificación & Identificación de prediabetes & Alta complejidad \\
+Abnoosian2023 & Multi-clasif. & Identificación de prediabetes & Alta complejidad \\
 \hline
 \end{tabular}
-\end{table*}
+\end{table}
 
 \textbf{Research Gap}
 
@@ -136,6 +137,123 @@ Este nuevo trabajo aborda estas limitaciones proponiendo un modelo basado en sob
 % Presenta la base conceptual de tu investigación.
 % Incluye: conceptos, definiciones, modelos, algoritmos, y formulación matemática.
 % Detalla las métricas de evaluación (ej. Accuracy, Precision, Recall, F1-Score, RMSE) con su definición, fórmula e interpretación.
+
+Para abordar computacionalmente el diagnóstico multivariado delineado en las secciones previas, resulta imperativo formalizar matemáticamente los modelos y algoritmos que componen el \textit{pipeline} experimental. En esta subsección se detalla la formulación técnica de la extracción de características, los clasificadores supervisados y las métricas estadísticas de desempeño.
+
+\subsubsection{Formalización del Problema Predictivo}
+
+El diagnóstico se aborda como un problema de clasificación binaria. Dado un conjunto de datos $D = \{(x_i, y_i)\}_{i=1}^{N}$, donde $x_i \in \mathbb{R}^p$ representa el vector de características de salud del paciente $i$ con $p$ dimensiones, y $y_i \in \{0, 1\}$ es la etiqueta objetivo (0 para individuos sanos, 1 para diagnóstico positivo), el propósito fundamental es aprender una función de mapeo $F: X \rightarrow Y$ que minimice el error de generalización sobre datos no observados.
+
+\subsubsection{Formulación de Autoencoders}
+
+La arquitectura orientada a la reducción de dimensionalidad no lineal se compone matemáticamente de dos funciones parametrizadas. Como señalan Şengöz y Vargün \cite{engz2025}, este tipo de red neuronal resulta particularmente útil para preservar la estructura relevante de datos biomédicos de alta dimensionalidad, tales como imágenes histopatológicas, reduciendo al mismo tiempo su complejidad computacional. El codificador realiza una transformación determinista del vector de entrada $x$ hacia un espacio latente de menor dimensión $h \in \mathbb{R}^d$ (donde $d < p$):
+
+\begin{equation}
+h = \sigma(W x + b)
+\end{equation}
+
+donde $W$ es la matriz de pesos del codificador, $b$ es el vector de sesgo, y $\sigma$ representa una función de activación no lineal.
+
+Posteriormente, el decodificador mapea la representación latente $h$ de vuelta al espacio original para generar una reconstrucción $\hat{x}$:
+
+\begin{equation}
+\hat{x} = \sigma'(W' h + b')
+\end{equation}
+
+El entrenamiento de esta red se ejecuta minimizando el Error Cuadrático Medio (MSE) como función de pérdida, forzando a los pesos a retener la varianza esencial de los datos clínicos:
+
+\begin{equation}
+L(x, \hat{x}) = \frac{1}{N} \sum_{i=1}^{N} (x_i - \hat{x}_i)^2
+\end{equation}
+
+Tekgöz y Topuz \cite{TEKGZ2025} corroboran empíricamente esta formulación al demostrar que un autoencoder aplicado sobre características cuantitativas de núcleos celulares logra reconstruir la entrada original conservando sus valores medios y reduciendo la varianza residual del conjunto reconstruido. En una línea similar, Mahdavi et al. \cite{Mahdavi2023} emplean una arquitectura híbrida de autoencoder variacional para obtener representaciones latentes con valor predictivo, evidenciando que este tipo de codificación no lineal puede superar a los enfoques basados en características crudas en tareas de pronóstico clínico.
+
+\subsubsection{Algoritmos de Clasificación}
+
+\paragraph{Regresión Logística}
+Este modelo estadístico estima la probabilidad de ocurrencia de la clase positiva modelando la combinación lineal de las características independientes a través de la función sigmoide logística. La probabilidad condicional se formaliza como:
+
+\begin{equation}
+P(Y=1|X) = \frac{1}{1 + e^{-(\beta_0 + \sum_{j=1}^{p} \beta_j X_j)}}
+\end{equation}
+
+donde $\beta_0$ es el intercepto y $\beta_j$ son los coeficientes que ponderan la influencia de cada variable clínica. Jithendra et al. \cite{Jithendra2023} reportan que, al comparar siete algoritmos supervisados para la predicción de diabetes, la regresión logística resultó ser el modelo con mejor desempeño, alcanzando una exactitud del 82\%, lo que respalda su vigencia como línea base interpretable en contextos clínicos.
+
+\paragraph{Random Forest}
+La predicción en este ensamble se fundamenta en la agregación de $K$ árboles de decisión independientes. Para una nueva observación $x$, cada árbol $k$ emite una predicción de clase $h_k(x)$. La clasificación final se determina mediante voto mayoritario:
+
+\begin{equation}
+\hat{y} = \text{moda}\{h_1(x), h_2(x), \dots, h_K(x)\}
+\end{equation}
+
+La inyección de aleatoriedad mediante \textit{bagging} asegura que la correlación entre los árboles se minimice, reduciendo drásticamente la varianza del modelo combinado. Olisah et al. \cite{Olisah2022} incorporan Random Forest dentro de un marco de predicción de diabetes que integra selección de características y técnicas de imputación, obteniendo mejoras sustanciales de desempeño respecto a los modelos sin preprocesamiento.
+
+\paragraph{Extreme Gradient Boosting (XGBoost)}
+A diferencia del enfoque paralelo de Random Forest, este algoritmo construye un ensamble aditivo de manera secuencial. En la iteración $t$, optimiza una función objetivo $\mathcal{L}^{(t)}$ que integra una pérdida empírica convexa $l$ y un término explícito de regularización estructural $\Omega$:
+
+\begin{equation}
+\mathcal{L}^{(t)} = \sum_{i=1}^{N} l\left(y_i, \hat{y}_i^{(t-1)} + f_t(x_i)\right) + \Omega(f_t)
+\end{equation}
+
+donde $\hat{y}_i^{(t-1)}$ es la predicción de la iteración anterior y $f_t$ es el nuevo árbol de decisión que minimiza los residuos computados mediante expansión de Taylor de segundo orden. Sibindi et al. \cite{Sibindi2023} destacan que, gracias a su parámetro de regularización explícito y al muestreo de columnas, XGBoost combate eficazmente el sobreajuste que suele afectar a otros métodos de \textit{boosting}, lo cual justifica su elección como clasificador de referencia en múltiples dominios clínicos, tal como confirman Sitompul et al. \cite{Sitompul2025} al reportar que este algoritmo superó a Random Forest y a la regresión logística en la clasificación del riesgo de accidente cerebrovascular.
+
+\paragraph{Perceptrón Multicapa (MLP)}
+La arquitectura prealimentada propaga la información clínica a través de capas ocultas sucesivas. Para una capa arbitraria $l$, el vector de activaciones $a^{(l)}$ se calcula matricialmente como:
+
+\begin{equation}
+a^{(l)} = f\left(W^{(l)} a^{(l-1)} + b^{(l)}\right)
+\end{equation}
+
+donde $W^{(l)}$ y $b^{(l)}$ son los pesos y sesgos específicos de la capa, ajustados iterativamente mediante el algoritmo de retropropagación del error y optimizadores basados en el gradiente descendente. Talebi Moghaddam et al. \cite{TalebiMoghaddam2024} emplean este tipo de clasificador combinado con técnicas de remuestreo como ADASYN para la predicción de diabetes tipo 2, obteniendo una de las combinaciones con mejor equilibrio entre sensibilidad y especificidad en un conjunto de datos con marcado desbalance de clases.
+
+\subsubsection{Métricas de Evaluación del Desempeño}
+
+El rendimiento predictivo de los clasificadores computacionales se evalúa extrayendo los conteos de la matriz de confusión: Verdaderos Positivos ($TP$), Verdaderos Negativos ($TN$), Falsos Positivos ($FP$) y Falsos Negativos ($FN$). Ahsan et al. \cite{Ahsan2021} subrayan que, más allá de la elección del algoritmo, la fiabilidad de estas métricas depende en gran medida del preprocesamiento y escalado adecuado de los datos clínicos. A partir de estos componentes, se definen las siguientes métricas fundamentales.
+
+\paragraph{Exactitud (Accuracy)}
+Corresponde a la proporción total de predicciones correctas sobre el volumen absoluto del conjunto de prueba:
+
+\begin{equation}
+\text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}
+\end{equation}
+
+Esta métrica establece una línea base del rendimiento global; sin embargo, pierde representatividad clínica frente a conjuntos poblacionales severamente desbalanceados.
+
+\paragraph{Precisión (Precision)}
+Refleja la tasa de acierto referida estrictamente a las instancias que el modelo ha catalogado como positivas:
+
+\begin{equation}
+\text{Precision} = \frac{TP}{TP + FP}
+\end{equation}
+
+Valores elevados de esta métrica indican una menor sobreestimación de la enfermedad, evitando así intervenciones clínicas innecesarias derivadas de falsos positivos.
+
+\paragraph{Sensibilidad (Recall)}
+Mide la capacidad algorítmica para detectar y clasificar correctamente a todos los individuos que verdaderamente poseen la condición:
+
+\begin{equation}
+\text{Recall} = \frac{TP}{TP + FN}
+\end{equation}
+
+Esta métrica constituye un indicador prioritario en el cribado epidemiológico, dado que el costo asociado a un falso negativo —es decir, un paciente enfermo no detectado— resulta clínicamente inaceptable.
+
+\paragraph{F1-Score}
+Representa la media armónica entre la precisión y la sensibilidad, penalizando de manera no lineal los valores extremos de cualquiera de las dos métricas constitutivas:
+
+\begin{equation}
+F1 = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
+\end{equation}
+
+Este coeficiente resulta especialmente útil como indicador agnóstico al desbalance de clases, tal como lo evidencian Bounab et al. \cite{Bounab2024}, quienes resaltan la relevancia de métricas robustas al desbalance —incluyendo el área bajo la curva precisión-recall— al evaluar modelos entrenados sobre conjuntos de datos con una distribución de clases marcadamente asimétrica.
+
+\paragraph{Área Bajo la Curva (ROC-AUC)}
+Constituye una medida probabilística calculada a partir de la integral del espacio geométrico formado por la tasa de verdaderos positivos (TPR) y la tasa de falsos positivos (FPR) al variar el umbral discriminante:
+
+\begin{equation}
+\text{AUC} = \int_{0}^{1} \text{TPR}(t) \, \mathrm{d}\,\text{FPR}(t)
+\end{equation}
+
+Alsabhan y Alfadhly \cite{Alsabhan2025} destacan que el AUC, junto con el coeficiente Kappa de Cohen, permite cuantificar de forma independiente a la distribución de clases la capacidad intrínseca de un clasificador para separar probabilísticamente a los pacientes sanos de los enfermos, lo cual lo convierte en un criterio de comparación más robusto que la exactitud cuando se contrastan múltiples algoritmos, tal como también lo demuestran Shastry y Sattar \cite{Shastry2023} en su modelo de ensamble aplicado al diagnóstico temprano de la enfermedad de Alzheimer.
 
 \subsection{Herramientas y Tecnologías}
 % Describe el entorno de hardware y software.
