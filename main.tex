@@ -1,11 +1,10 @@
-
 \documentclass[journal]{IEEEtran}
 \hyphenation{op-tical net-works semi-conduc-tor}
-
+ 
 \begin{document}
-
+ 
 \title{Bare Demo of IEEEtran.cls\\ for IEEE Journals}
-
+ 
 \author{Michael~Shell,~\IEEEmembership{Member,~IEEE,}
         John~Doe,~\IEEEmembership{Fellow,~OSA,}
         and~Jane~Doe,~\IEEEmembership{Life~Fellow,~IEEE}% <-this % stops a space
@@ -14,27 +13,27 @@ of Electrical and Computer Engineering, Georgia Institute of Technology, Atlanta
 GA, 30332 USA e-mail: (see http://www.michaelshell.org/contact.html).}% <-this % stops a space
 \thanks{J. Doe and J. Doe are with Anonymous University.}% <-this % stops a space
 \thanks{Manuscript received April 19, 2005; revised August 26, 2015.}}
-
-
+ 
+ 
 \markboth{Journal of \LaTeX\ Class Files,~Vol.~14, No.~8, August~2015}%
 {Shell \MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for IEEE Journals}
-
-
+ 
+ 
 \maketitle
-
+ 
 \begin{abstract}
 The abstract goes here.
 \end{abstract}
-
+ 
 \begin{IEEEkeywords}
 IEEE, IEEEtran, journal, \LaTeX, paper, template.
 \end{IEEEkeywords}
-
+ 
 \IEEEpeerreviewmaketitle
-
-
-
-
+ 
+ 
+ 
+ 
 \section{Introducción}
 % Escribe aquí tu introducción (8-10 párrafos) siguiendo la estructura General -> Particular.
 % Los primeros párrafos deben incluir: Contexto, estadísticas, definiciones, importancia y situación actual.
@@ -42,7 +41,7 @@ IEEE, IEEEtran, journal, \LaTeX, paper, template.
 % Los últimos párrafos: Justificación y motivación científica.
 % El último párrafo debe contener el objetivo y la estructura del documento, sin referencias.
 \IEEEPARstart{I}{nicia} aquí la introducción.
-
+ 
 \section{Trabajos Relacionados}
 % Revisa un mínimo de 10 trabajos.
 % Para cada trabajo, crea un párrafo que describa:
@@ -53,98 +52,166 @@ IEEE, IEEEtran, journal, \LaTeX, paper, template.
 % 5. Aportes principales.
 % 6. Deficiencias o limitaciones.
 % Al final, incluye un análisis de la brecha de investigación (Research Gap).
-
+ 
 \section{Materiales y Métodos}
 % Esta sección se divide en las siguientes cuatro subsecciones obligatorias.
-
+ 
 \subsection{Fundamentos Teóricos}
 % Presenta la base conceptual de tu investigación.
 % Incluye: conceptos, definiciones, modelos, algoritmos, y formulación matemática.
 % Detalla las métricas de evaluación (ej. Accuracy, Precision, Recall, F1-Score, RMSE) con su definición, fórmula e interpretación.
-
+ 
 \subsection{Herramientas y Tecnologías}
 % Describe el entorno de hardware y software.
 % Párrafo 1: Lenguajes (ej. Python 3.12) y librerías (ej. Pandas, Scikit-Learn, TensorFlow).
 % Párrafo 2: Entornos (ej. Google Colab, Jupyter) y hardware (CPU, GPU, RAM).
-
+ 
 \subsection{Dataset}
 % Describe el conjunto de datos utilizado.
 % Incluye: Referencia (ej. Kaggle), origen, número de registros y descripción de variables.
 % Presenta un análisis exploratorio de datos (estadísticas descriptivas, gráficos de distribución, matriz de correlación, etc.).
 % Analiza la calidad de los datos (valores faltantes, duplicados, outliers, balanceo de clases).
-
+ 
 \subsection{Metodología Propuesta}
 % Describe detalladamente tu solución.
 % Incluye un diagrama o pipeline del flujo general.
 % Detalla cada etapa (ej. Preprocesamiento, Entrenamiento, Evaluación).
 % Especifica los algoritmos y parámetros utilizados en el procedimiento experimental.
+La metodología propuesta se desarrolló tomando como referencia el flujo metodológico más utilizado en los trabajos revisados sobre predicción de diabetes mediante técnicas de aprendizaje automático. En términos generales, la propuesta comprende las etapas de adquisición del conjunto de datos, análisis exploratorio, preprocesamiento, selección de características, entrenamiento de modelos, optimización de hiperparámetros, evaluación del desempeño y selección del mejor clasificador \cite{Khokhar2024,Olisah2022}. La Figura~\ref{fig:pipeline} resume el procedimiento experimental planteado. 
 
+\begin{figure}[ht]
+\centering
+\fbox{
+\begin{minipage}{0.47\textwidth}
+\centering
+\small
+Diabetes Health Indicators Dataset\\
+(433\,323 registros, 20 variables)\\
+$\downarrow$\\[0.2cm]
+ 
+Análisis Exploratorio de Datos (EDA)\\
+\textit{Distribuciones, correlaciones, calidad de datos}\\
+$\downarrow$\\[0.2cm]
+ 
+Preprocesamiento\\
+\textit{Limpieza, tratamiento de valores faltantes, normalización y análisis del balance de clases}\\
+$\downarrow$\\[0.2cm]
+ 
+Selección de Características\\
+\textit{Correlación e importancia de variables}\\
+$\downarrow$\\[0.2cm]
+ 
+División Train/Test\\
++ Stratified k-Fold Cross Validation\\
+$\downarrow$\\[0.2cm]
+ 
+Entrenamiento de Modelos\\
+\begin{tabular}{c}
+Logistic Regression\\
+Random Forest\\
+XGBoost\\
+MLP
+\end{tabular}\\
+$\downarrow$\\[0.2cm]
+ 
+Optimización de Hiperparámetros\\
+(Grid Search)\\
+$\downarrow$\\[0.2cm]
+ 
+Evaluación\\
+Accuracy, Precision, Recall,\\
+F1-score y ROC-AUC\\
+$\downarrow$\\[0.2cm]
+ 
+Comparación de Modelos\\
+$\downarrow$\\[0.2cm]
+ 
+Selección del Mejor Modelo
+\end{minipage}
+}
+\caption{Pipeline metodológico propuesto para la predicción de diabetes.}
+\label{fig:pipeline}
+\end{figure}
+ 
+En primer lugar, se utilizará el conjunto de datos \textit{Diabetes Health Indicators}, conformado por 433\,323 registros y 20 variables relacionadas con antecedentes médicos, factores demográficos y hábitos de vida asociados con la diabetes. La selección de este conjunto de datos responde a que los estudios revisados utilizan principalmente bases de datos tabulares con indicadores clínicos y de salud para entrenar modelos de clasificación supervisada \cite{Khokhar2024,ElSofany2024}.
+
+Posteriormente se realizará un Análisis Exploratorio de Datos (EDA), cuyo objetivo será comprender la estructura del conjunto de datos antes del entrenamiento de los modelos. Durante esta etapa se analizará la distribución de las variables, la frecuencia de cada clase, las estadísticas descriptivas, la correlación entre atributos y la presencia de posibles valores atípicos o inconsistencias. Este procedimiento permitirá determinar las necesidades reales de preprocesamiento y seleccionar las técnicas más adecuadas para el conjunto de datos \cite{Khokhar2024,Olisah2022}.
+
+La etapa de preprocesamiento comprenderá la revisión de registros inconsistentes, la identificación de valores faltantes, la eliminación de registros duplicados en caso de existir y la normalización de las variables numéricas cuando el algoritmo empleado sea sensible a la escala de los datos. Asimismo, se evaluará el grado de desbalance entre las clases de la variable objetivo; únicamente si dicho desbalance resulta significativo se considerará la aplicación de técnicas de sobremuestreo como SMOTE, siguiendo las recomendaciones observadas en diversos trabajos recientes \cite{Abnoosian2023,Khokhar2024}.
+
+Una vez preparados los datos, se realizará un análisis de la relevancia de las variables mediante medidas de correlación y métodos basados en la importancia de características proporcionada por modelos de árboles de decisión, como Random Forest y XGBoost. Debido a que el conjunto de datos contiene únicamente veinte variables, no se contempla inicialmente la aplicación de técnicas de reducción de dimensionalidad como PCA o ICA, aunque estas podrán evaluarse si los experimentos evidencian beneficios en el desempeño predictivo \cite{Olisah2022,Abnoosian2023}.
+
+El conjunto de datos será dividido en subconjuntos de entrenamiento y prueba. Sobre el conjunto de entrenamiento se aplicará validación cruzada estratificada (\textit{Stratified k-Fold Cross Validation}), técnica ampliamente utilizada en la literatura debido a que proporciona una estimación más robusta del rendimiento del modelo y mantiene la proporción de las clases durante el proceso de entrenamiento \cite{Olisah2022,Abnoosian2023}.
+ 
+La fase de entrenamiento consistirá en la comparación de cuatro algoritmos de clasificación: Regresión Logística (Logistic Regression), Random Forest, Extreme Gradient Boosting (XGBoost) y Redes Neuronales Multicapa (Multi-Layer Perceptron, MLP). Estos modelos fueron seleccionados porque representan diferentes enfoques de aprendizaje supervisado y han mostrado resultados competitivos en problemas de predicción de diabetes utilizando datos tabulares \cite{ElSofany2024,Khokhar2024}.
+
+Con el propósito de maximizar el desempeño predictivo de cada clasificador, se realizará un proceso de optimización de hiperparámetros mediante Grid Search combinado con validación cruzada. Para Regresión Logística se evaluarán parámetros relacionados con la regularización; para Random Forest se optimizarán el número de árboles y la profundidad máxima; para XGBoost se ajustarán parámetros como la tasa de aprendizaje, el número de árboles y la profundidad máxima; mientras que para MLP se explorarán diferentes configuraciones de arquitectura, función de activación y tasa de aprendizaje \cite{Olisah2022,Abnoosian2023,ElSofany2024}.
+ 
+Finalmente, el rendimiento de cada modelo será evaluado mediante las métricas Accuracy, Precision, Recall, F1-score y Área Bajo la Curva ROC (ROC-AUC), las cuales constituyen las métricas de evaluación más utilizadas en la literatura sobre predicción de diabetes. A partir de estos resultados se comparará el desempeño de los clasificadores y se seleccionará el modelo que presente el mejor equilibrio entre capacidad predictiva, estabilidad e interpretabilidad. En caso de que el mejor modelo corresponda a Random Forest o XGBoost, se realizará además un análisis de importancia de variables para identificar los factores con mayor influencia en la predicción del riesgo de diabetes \cite{ElSofany2024,Khokhar2024,Olisah2022}.
+ 
 \section{Resultados}
 % Presenta la evidencia cuantitativa de tu experimentación.
 % Utiliza tablas para mostrar resultados numéricos y comparaciones.
 % Utiliza figuras para gráficos y visualizaciones.
 % Reporta todas las métricas definidas en la sección de Fundamentos Teóricos.
 % Compara tu propuesta con métodos base y el estado del arte.
-
+ 
 \section{Discusión}
 % Interpreta y analiza los resultados (NO los repitas).
 % Analiza el comportamiento observado, las ventajas y limitaciones.
 % Compara tus hallazgos con los trabajos previos y cómo tu trabajo aborda la brecha de investigación identificada.
-
+ 
 \section{Conclusiones}
 % Responde directamente al objetivo planteado en la introducción.
 % Presenta de 3 a 5 hallazgos o contribuciones principales de tu investigación.
 % Menciona el impacto o la relevancia de tus resultados.
-
+ 
 \section{Trabajos Futuros}
 % Presenta posibles líneas de continuidad para la investigación.
 % Ejemplos: usar nuevos datasets, probar otros algoritmos, optimizar el modelo, etc.
-
+ 
 \section{Consentimiento}
 % Incluir únicamente si aplica (ej. uso de datos personales, participación de sujetos humanos).
 % Si no es necesario, esta sección puede ser eliminada.
-
-
+ 
+ 
 \appendices
 \section{Proof of the First Zonklar Equation}
 Appendix one text goes here.
-
-
-\section{}
+ 
+ 
+\section{Proof of the Second Zonklar Equation}
 Appendix two text goes here.
-
+ 
 \section*{Acknowledgment}
-
-
+ 
+ 
 The authors would like to thank...
-
+ 
 \ifCLASSOPTIONcaptionsoff
   \newpage
 \fi
-
-
-\begin{thebibliography}{1}
-
+ 
+ 
+\begin{thebibliography}{99}
+ 
 \bibitem{IEEEhowto:kopka}
 H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
   0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
-
+ 
+\bibitem{Olisah2022}
+C. Olisah et al., ``Diabetes Mellitus Prediction Using Machine Learning Techniques,'' 2022.
+ 
+\bibitem{Abnoosian2023}
+A. Abnoosian et al., ``An Ensemble Machine Learning Framework for Diabetes Prediction,'' \emph{BMC Bioinformatics}, vol. 24, 2023.
+ 
+\bibitem{ElSofany2024}
+H. El-Sofany et al., ``A Proposed Technique Using Machine Learning for the Prediction of Diabetes,'' \emph{International Journal of Intelligent Systems}, 2024.
+ 
+\bibitem{Khokhar2024}
+A. Khokhar et al., ``Systematic Literature Review on Artificial Intelligence and Machine Learning for Diabetes Prediction,'' 2024.
+ 
 \end{thebibliography}
-
-\begin{IEEEbiography}{Michael Shell}
-Biography text here.
-\end{IEEEbiography}
-
-\begin{IEEEbiographynophoto}{John Doe}
-Biography text here.
-\end{IEEEbiographynophoto}
-
-
-\begin{IEEEbiographynophoto}{Jane Doe}
-Biography text here.
-\end{IEEEbiographynophoto}
-
-
+ 
 % that's all folks
 \end{document}
-
