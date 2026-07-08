@@ -44,16 +44,69 @@ IEEE, IEEEtran, journal, \LaTeX, paper, template.
 \IEEEPARstart{I}{nicia} aquí la introducción.
 
 \section{Trabajos Relacionados}
-% Revisa un mínimo de 10 trabajos.
-% Para cada trabajo, crea un párrafo que describa:
-% 1. Problema que aborda.
-% 2. Objetivo principal.
-% 3. Metodología utilizada.
-% 4. Resultados obtenidos.
-% 5. Aportes principales.
-% 6. Deficiencias o limitaciones.
-% Al final, incluye un análisis de la brecha de investigación (Research Gap).
 
+En esta sección se describen las investigaciones previas relacionadas con la clasificación y predicción de la diabetes mediante técnicas de aprendizaje automático, organizadas cronológicamente para evidenciar la evolución de las metodologías en este dominio.
+
+Dutta et al. \cite{Dutta2022} abordan la dificultad de realizar predicciones precisas en etapas tempranas debido a la escasez de datos etiquetados y la presencia de valores faltantes en contextos clínicos específicos. El objetivo principal de su investigación es introducir un nuevo conjunto de datos etiquetados de Bangladesh y proponer un pipeline de clasificación automatizado. La metodología consiste en un ensamble pesado que integra clasificadores como Naive Bayes, Random Forest, Decision Tree, XGBoost y LightGBM, complementado con imputación estadística y selección de características basada en Random Forest. Los resultados demuestran que el ensamble propuesto alcanza una precisión de 0.735 y un área bajo la curva (AUC) de 0.832. El aporte fundamental reside en la creación de un dataset demográfico robusto para el sur de Asia que facilita el modelado a nivel poblacional. No obstante, el estudio presenta como deficiencia una precisión relativamente baja en comparación con otros modelos contemporáneos y una representatividad limitada a una muestra geográfica específica.
+
+Joshi y Dhakal \cite{Joshi2021} investigan la falta de comprensión profunda sobre los factores de riesgo y la validez de las ecuaciones predictivas en poblaciones indígenas. El objetivo consiste en predecir la diabetes tipo 2 en mujeres Pima utilizando tanto modelos econométricos tradicionales como algoritmos de aprendizaje automático. La metodología emplea regresión logística y árboles de decisión (DT), utilizando criterios como AIC y BIC para la selección de variables. Los resultados indican una precisión del 78.26\%, identificando a la glucosa, el IMC y la edad como los factores más determinantes. El estudio aporta un análisis detallado de las interacciones entre variables, como el impacto inverso entre la edad y el número de embarazos. Sin embargo, se identifica como limitación el uso de un número reducido de predictores, lo que compromete la generalización de los resultados a poblaciones más diversas.
+
+Wang et al. \cite{Wang2021} enfrentan el problema de la alta redundancia en espacios de características de gran dimensión y el desbalance de clases en datos de encuestas médicas. El propósito del trabajo es optimizar la clasificación de individuos de alto riesgo mediante un modelo que fortalezca la generalización. La metodología propuesta utiliza el clasificador Random Forest en combinación con la técnica de sobremuestreo SVM-SMOTE y la reducción de características mediante LASSO. Como resultado, el modelo LASSO-SVMSMOTE-Random Forest logra un AUC de 0.948 y una precisión de 89.0\%. El principal aporte es la validación de que el remuestreo de frontera mejora significativamente la identificación de la clase minoritaria. Como deficiencia, los autores señalan la ausencia de factores de historia familiar y limitaciones en los indicadores de estilos de vida negativos en su base de datos.
+
+Ren \cite{Ren2024} analiza el impacto de la diabetes como una enfermedad crónica generalizada y la necesidad de identificar indicadores conductuales clave. El objetivo es desarrollar modelos predictivos utilizando el conjunto de datos de indicadores de salud BRFSS para facilitar intervenciones tempranas. La metodología incluye el uso de la prueba Chi-cuadrado para la selección de 15 atributos críticos y el entrenamiento de un clasificador CatBoost junto con SMOTE. El modelo alcanzó una precisión del 86.6\% en el conjunto de prueba. El aporte más relevante es la jerarquización de la salud general y el IMC como predictores críticos de la enfermedad. No obstante, el estudio muestra deficiencias en la precisión de la validación, sugiriendo que el sobremuestreo no compensó totalmente el sesgo del conjunto de datos desbalanceado.
+
+Li et al. \cite{Li2025} abordan la falta de interpretabilidad en los modelos de aprendizaje automático aplicados a la salud pública en China. El objetivo es predecir el riesgo de prediabetes cuantificando el impacto real de cada factor contribuyente. La metodología se basa en la selección de características mediante LASSO y el uso de XGBoost como clasificador, integrando SHAP para la interpretación del modelo. Los resultados arrojan un AUC superior de 0.939, superando a modelos tradicionales como la regresión logística. El aporte principal es la definición de umbrales clínicos específicos, como la edad superior a 53 años, para la identificación de riesgo. Sin embargo, la limitación detectada es el enfoque puramente basado en datos, que podría ignorar mecanismos biológicos subyacentes y variaciones genéticas.
+
+Ashisha et al. \cite{Ashisha2024} investigan la ineficacia de los modelos de diagnóstico que no consideran adecuadamente los valores atípicos y el sesgo de clase en entornos de IoMT. El objetivo es proponer un modelo de e-diagnóstico capaz de ser ejecutado de forma remota y eficiente. La metodología introduce el tratamiento de valores atípicos mediante el rango intercuartílico (IQR), selección de características con el algoritmo Boruta y el uso de Random Forest. Los resultados muestran una precisión del 94\% en el dataset PIMA, superando a algoritmos de boosting y árboles de decisión simples. El estudio aporta una arquitectura que integra sobremuestreo aleatorio para equilibrar el aprendizaje del modelo. Una deficiencia señalada es el riesgo potencial de sobreajuste derivado de la duplicación de instancias en la clase minoritaria.
+
+Ahmed et al. \cite{Ahmed2025} enfrentan el problema de la opacidad de los modelos de "caja negra", que dificulta la confianza de los clínicos en las predicciones automatizadas. El objetivo es comparar los intérpretes LIME y SHAP para proporcionar transparencia tanto local como global en la predicción de la diabetes. La metodología utiliza una arquitectura de regresión logística con mecanismo de atención espacial y Random Forest aplicada al dataset BRFSS. El resultado principal indica que el modelo de regresión logística logra una precisión del 86\%, siendo explicado detalladamente por ambos intérpretes. El aporte consiste en el análisis comparativo que revela que SHAP es más consistente pero computacionalmente costoso, mientras que LIME es más rápido pero inestable. Como deficiencia, se nota que las explicaciones pueden ser engañosas si el modelo subyacente presenta sesgos no detectados.
+
+Hasan et al. \cite{Hasan2020} abordan la precisión limitada en la predicción de diabetes debida a valores perdidos y la dificultad de separar clases no lineales. El objetivo es proponer un marco robusto basado en el ensamble de clasificadores para maximizar el AUC. La metodología emplea un ensamble pesado (soft voting) de modelos como XGBoost, AdaBoost y MLP, utilizando pesos estimados a partir de sus respectivos valores de AUC. Los resultados revelan que la combinación de AdaBoost y XGBoost supera a los modelos individuales con un AUC de 0.950. El aporte es la demostración de que el uso del AUC como peso es más efectivo que la precisión en conjuntos de datos desbalanceados. No obstante, se observó que la estandarización de datos no siempre mejora el rendimiento en modelos basados en árboles, lo cual es una limitación metodológica.
+
+Gundogdu \cite{Gudogdu2023} investiga la necesidad de sistemas de detección rápidos que reduzcan la dependencia de pruebas de sangre invasivas y costosas. El objetivo es desarrollar una técnica eficiente basada en cuestionarios directos para el diagnóstico de diabetes en etapas tempranas. La metodología utiliza regresión lineal múltiple (MLR) combinada con Random Forest para la selección de características y XGBoost para la clasificación final. El modelo alcanzó una precisión excepcional del 99.2\% con un tiempo de respuesta de milisegundos. El aporte fundamental es la reducción drástica de la complejidad computacional mediante la selección de solo 9 variables significativas. La principal deficiencia es el tamaño reducido de la muestra, la cual se limita a un único hospital en Bangladesh.
+
+Abnoosian et al. \cite{Abnoosian2023} abordan la carencia de modelos de multi-clasificación que identifiquen estados de prediabetes, enfocándose en conjuntos de datos desbalanceados del mundo real. El objetivo es proponer un pipeline innovador para clasificar a los pacientes en tres categorías: diabético, no diabético y prediabético. La metodología integra imputación KNN y un ensamble pesado basado en AUC que combina clasificadores como SVM, AdaBoost y Naive Bayes. Los resultados muestran una precisión promedio del 98.87\% y un AUC de 0.999. El aporte más significativo es la capacidad del modelo para distinguir con éxito la prediabetes como una clase independiente. Sin embargo, la complejidad del ensamble resulta en tiempos de entrenamiento más largos, lo que se identifica como una deficiencia operativa.
+
+\subsection{Análisis de Brecha}
+
+A continuación, se presenta un resumen comparativo de los trabajos analizados (Tabla \ref{tab:resumen}) y la identificación de la brecha de investigación.
+
+\begin{table*}[t]
+\centering
+\caption{Resumen comparativo de trabajos relacionados.}
+\label{tab:resumen}
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Referencia} & \textbf{Técnica Principal} & \textbf{Aportes} & \textbf{Limitaciones} \\
+\hline
+Dutta2022 & Ensamble Pesado & Nuevo dataset de Bangladesh & Precisión moderada \\
+\hline
+Joshi2021 & Regresión Logística & Análisis de interacciones & Pocos predictores \\
+\hline
+Wang2021 & Random Forest + SMOTE & Balanceo de fronteras & Sin historia familiar \\
+\hline
+Ren2024 & CatBoost + SMOTE & Selección Chi-cuadrado & Baja precisión en test \\
+\hline
+Li2025 & XGBoost + SHAP & Interpretación con SHAP & Enfoque puramente clínico \\
+\hline
+Ashisha2024 & RF + Boruta & Arquitectura para IoMT & Riesgo de sobreajuste \\
+\hline
+Ahmed2025 & XAI (LIME/SHAP) & Transparencia del modelo & Alto costo computacional \\
+\hline
+Hasan2020 & Ensamble (AUC-weight) & Robustez ante desbalance & Estandarización ineficaz \\
+\hline
+Gundogdu2023 & MLR + XGBoost & Rapidez diagnóstica & Dataset muy pequeño \\
+\hline
+Abnoosian2023 & Multi-clasificación & Identificación de prediabetes & Alta complejidad \\
+\hline
+\end{tabular}
+\end{table*}
+
+\textbf{Research Gap}
+
+A pesar de los avances significativos en la aplicación de algoritmos de aprendizaje automático para la detección de la diabetes, persisten problemas críticos sin resolver. En primer lugar, la mayoría de los estudios se centran en clasificaciones binarias, omitiendo la identificación precisa de la prediabetes, una etapa vital para la prevención. En segundo lugar, existe una desconexión entre los modelos de alta precisión (ensambles complejos) y la necesidad de interpretabilidad clínica en tiempo real para dispositivos IoMT. Finalmente, persiste la limitación de modelos entrenados en datasets estáticos que no consideran el desbalance de clases de forma dinámica mediante técnicas de sobremuestreo optimizadas.
+
+Este nuevo trabajo aborda estas limitaciones proponiendo un modelo basado en sobremuestreo aleatorio optimizado para IoMT, que busca no solo maximizar la precisión diagnóstica, sino también garantizar la eficiencia computacional y la adaptabilidad a entornos de monitoreo remoto, superando la brecha entre la complejidad del algoritmo y su aplicabilidad clínica práctica.
 \section{Materiales y Métodos}
 % Esta sección se divide en las siguientes cuatro subsecciones obligatorias.
 
@@ -123,13 +176,8 @@ The authors would like to thank...
 \fi
 
 
-\begin{thebibliography}{1}
-
-\bibitem{IEEEhowto:kopka}
-H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
-  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
-
-\end{thebibliography}
+\bibliographystyle{IEEEtran}
+\bibliography{references}
 
 \begin{IEEEbiography}{Michael Shell}
 Biography text here.
