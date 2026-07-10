@@ -8,16 +8,15 @@
 
 \begin{document}
 
-\title{Bare Demo of IEEEtran.cls\\ for IEEE Journals}
+\title{Optimización del Diagnóstico de Diabetes Multivariada mediante Aprendizaje por Representación con Autoencoders y Modelos de Clasificación Robustos}
 
-\author{Michael~Shell,~\IEEEmembership{Member,~IEEE,}
-        John~Doe,~\IEEEmembership{Fellow,~OSA,}
-        and~Jane~Doe,~\IEEEmembership{Life~Fellow,~IEEE}% <-this % stops a space
-\thanks{M. Shell was with the Department
-of Electrical and Computer Engineering, Georgia Institute of Technology, Atlanta,
-GA, 30332 USA e-mail: (see http://www.michaelshell.org/contact.html).}% <-this % stops a space
-\thanks{J. Doe and J. Doe are with Anonymous University.}% <-this % stops a space
-\thanks{Manuscript received April 19, 2005; revised August 26, 2015.}}
+\author{David~Alfredo~Huamani~Ollachica,
+        Marco~Ramiro~Quispe~Flores,
+        Juan~José~Condori~Pinto,
+        Jeferson~Jofre~Quispe~Madariaga,\\
+        and~Julio~Rubén~Chura~Acabana% <-this % stops a space
+}
+
 
 
 \markboth{Journal of \LaTeX\ Class Files,~Vol.~14, No.~8, August~2015}%
@@ -259,6 +258,10 @@ Alsabhan y Alfadhly \cite{Alsabhan2025} destacan que el AUC, junto con el coefic
 % Describe el entorno de hardware y software.
 % Párrafo 1: Lenguajes (ej. Python 3.12) y librerías (ej. Pandas, Scikit-Learn, TensorFlow).
 % Párrafo 2: Entornos (ej. Google Colab, Jupyter) y hardware (CPU, GPU, RAM).
+
+El pipeline experimental se implementó utilizando el lenguaje de programación Python (versión 3.11), seleccionado por su robustez y ecosistema especializado en computación científica y aprendizaje profundo. Para la manipulación, limpieza y análisis estadístico estructural del conjunto de datos, se utilizaron las librerías NumPy y Pandas. El diseño, entrenamiento y optimización de los clasificadores tradicionales (Regresión Logística, Random Forest y XGBoost), así como la ejecución de la validación cruzada y el cálculo de las métricas de desempeño, se realizaron mediante el entorno de Scikit-Learn. Por su parte, la arquitectura del autoencoder no lineal y la red neuronal Perceptrón Multicapa (MLP) se construyeron utilizando la API funcional de Keras sobre el motor de TensorFlow (versión 2.15).
+
+Los experimentos computacionales se ejecutaron de manera local en una estación de trabajo dedicada, utilizando la interfaz de desarrollo interactiva Jupyter Notebook sobre la distribución de Python instalada en el sistema operativo. El procesamiento de los datos y el entrenamiento de los clasificadores computacionales se sustentó sobre una arquitectura de hardware integrada por una Unidad Central de Procesamiento (CPU) AMD Ryzen 5 3600 de 6 núcleos físicos a una frecuencia base de 3.59 GHz, trabajando en conjunto con una memoria RAM dinámica de 16.0 GB operando a una velocidad de transferencia de 3200 MHz. Asimismo, para acelerar las operaciones matriciales y de optimización mediante paralelización de procesos, el entorno contó con el soporte de una Unidad de Procesamiento Gráfico (GPU) dedicada NVIDIA GeForce GTX 1650 con 4 GB de memoria VRAM. La persistencia de datos, carga masiva del dataset y lectura de matrices se optimizaron mediante un subsistema de almacenamiento de estado sólido (SSD) Kingston NVMe acoplado a una placa base B450M, minimizando los tiempos muertos por cuello de botella de E/S.
 
 \subsection{Dataset}
 % Describe el conjunto de datos utilizado.
