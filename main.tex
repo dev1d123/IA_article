@@ -6,6 +6,12 @@
 \documentclass[journal]{IEEEtran}
 \hyphenation{op-tical net-works semi-conduc-tor}
 
+%%%%%%%%%%%%%%%%
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
+%%%%%%%%%%%%%%%%
+
 \begin{document}
 
 \title{Optimización del Diagnóstico de Diabetes Multivariada mediante Aprendizaje por Representación con Autoencoders y Modelos de Clasificación Robustos}
@@ -264,65 +270,35 @@ El pipeline experimental se implementó utilizando el lenguaje de programación 
 Los experimentos computacionales se ejecutaron de manera local en una estación de trabajo dedicada, utilizando la interfaz de desarrollo interactiva Jupyter Notebook sobre la distribución de Python instalada en el sistema operativo. El procesamiento de los datos y el entrenamiento de los clasificadores computacionales se sustentó sobre una arquitectura de hardware integrada por una Unidad Central de Procesamiento (CPU) AMD Ryzen 5 3600 de 6 núcleos físicos a una frecuencia base de 3.59 GHz, trabajando en conjunto con una memoria RAM dinámica de 16.0 GB operando a una velocidad de transferencia de 3200 MHz. Asimismo, para acelerar las operaciones matriciales y de optimización mediante paralelización de procesos, el entorno contó con el soporte de una Unidad de Procesamiento Gráfico (GPU) dedicada NVIDIA GeForce GTX 1650 con 4 GB de memoria VRAM. La persistencia de datos, carga masiva del dataset y lectura de matrices se optimizaron mediante un subsistema de almacenamiento de estado sólido (SSD) Kingston NVMe acoplado a una placa base B450M, minimizando los tiempos muertos por cuello de botella de E/S.
 
 \subsection{Dataset}
-% Describe el conjunto de datos utilizado.
-% Incluye: Referencia (ej. Kaggle), origen, número de registros y descripción de variables.
-% Presenta un análisis exploratorio de datos (estadísticas descriptivas, gráficos de distribución, matriz de correlación, etc.).
-% Analiza la calidad de los datos (valores faltantes, duplicados, outliers, balanceo de clases).
-El conjunto de datos seleccionado para este estudio corresponde a \textit{Diabetes Health Indicators} \cite{tahmasbi2025diabetes}, el cual se deriva directamente del \textit{Behavioral Risk Factor Surveillance System} (BRFSS) del año 2023, recopilado por los \textit{Centers for Disease Control and Prevention} (CDC) de los Estados Unidos. Este registro proviene de una encuesta telefónica de cobertura nacional que recopila datos anuales sobre comportamientos de riesgo y enfermedades crónicas. La base de datos original consta de 433\,323 registros y 345 variables, de la cual se extrajo un subconjunto de 20 variables predictoras y una variable objetivo, manteniendo la naturaleza pública y anonimizada de la muestra original.
 
-\subsubsection{Análisis de Calidad de los Datos}
+Los datos seleccionado para este estudio corresponde a \textit{Diabetes Health Indicators} \cite{tahmasbi2025diabetes}, derivado directamente del \textit{Behavioral Risk Factor Surveillance System} (BRFSS) del año 2023, gestionado por los CDC de los Estados Unidos. La muestra original consta de más de 400\,000 registros. Las variables empleadas en el estudio se describen exhaustivamente en la Tabla~\ref{tab:variables}.
 
-Un examen detallado de la calidad de los datos permite diagnosticar la integridad del dataset antes de la fase de modelado predictivo, enfocándose en cuatro ejes fundamentales:
+La estructura poblacional del conjunto de datos tiene la variable predictiva principal (\texttt{DIABETE4}) se evidencia un desbalance de clases, como se aprecia en la Figura \ref{fig:desbalance}. Existe una abrumadora mayoría de casos negativos frente a los positivos lo que requiere mitigar el sesgo sistemático.
 
-\begin{itemize}
-    \item \textbf{Valores Faltantes y Estructura Condicional:} A diferencia de las versiones sintéticas o altamente depuradas, este conjunto de datos conserva distribuciones reales. El análisis de frecuencias demuestra que las variables principales presentan una completitud absoluta debido a la depuración inicial por lista (\textit{listwise deletion}). No obstante, la variable \texttt{DIABTYPE} registra un 94\% de valores nulos (\textit{null}). Este comportamiento no constituye un fallo de registro, sino una estructura condicional lógica de la encuesta: dicho atributo solo se cumplimenta si el participante responde afirmativamente al diagnóstico de diabetes en \texttt{DIABETE4}.
-    \item \textbf{Registros Idénticos:} Se detecta la presencia de vectores de características idénticos entre diferentes observaciones. Dado que el dataset se compone mayoritariamente de variables cualitativas nominales u ordinales acotadas, la coincidencia de perfiles epidemiológicos es un fenómeno estadísticamente esperado en muestras que superan los 400\,000 registros, por lo que no se consideran duplicados erróneos.
-    \item \textbf{Valores Atípicos (Outliers):} El examen de las variables continuas revela el escalado y distribución de los indicadores físicos. Para la variable del Índice de Masa Corporal (\texttt{\_BMI5}), se identifica un rango de valores comprendido entre un mínimo de 1202 y un máximo de 9984. Este rango responde a la codificación oficial de los CDC, donde el valor real del IMC se multiplica por 100 para eliminar los puntos decimales en el almacenamiento de datos (representando un espectro real de 12.02 a 99.84). La distribución exhibe una marcada asimetría positiva con una cola extendida hacia la derecha, evidenciando casos reales de obesidad mórbida que resultan críticos para la predicción del riesgo metabólico.
-    \item \textbf{Balanceo de Clases:} La variable objetivo \texttt{DIABETE4} evidencia un desbalanceo de clases característico de los estudios epidemiológicos de base poblacional. La inmensa mayoría de la población muestreada pertenece a la categoría no diabética, mientras que la subpoblación con diagnóstico positivo conforma una clara minoría, lo que requerirá estrategias de penalización o remuestreo durante el entrenamiento de los clasificadores.
-\end{itemize}
+\begin{figure}[t] % Cambiado a [t] para formato IEEE
+    \centering
+    \includegraphics[width=0.45\textwidth]{images/grafico1_desbalance.pdf}
+    \caption{Distribución de diagnósticos en la muestra. Se observa una abrumadora mayoría de casos negativos (sanos) frente a los diagnósticos positivos.}
+    \label{fig:desbalance}
+\end{figure}
 
-\subsubsection{Descripción de las Variables Seleccionadas}
+Para diagnosticar la dependencia multivariada y descartar redundancias, se normalizaron de forma binaria los indicadores fisiológicos e históricos más críticos, computando posteriormente su matriz de correlación de Pearson, expuesta en la Figura \ref{fig:correlacion}. El mapa de calor confirma empíricamente la prevalencia concurrente de factores patológicos. Variables clínicas como el historial de hipertensión (\texttt{\_RFHYPE6}), el colesterol elevado (\texttt{\_RFCHOL3}) y el Índice de Masa Corporal (\texttt{\_BMI5}) presentan las magnitudes de correlación lineal positiva más altas respecto al diagnóstico de diabetes, justificando así su fuerte capacidad predictiva dentro del modelo.
 
-Para garantizar una visualización completa, estructurada y legible dentro del formato de doble columna del artículo, las variables se describen exhaustivamente en la Tabla~\ref{tab:variables}. Al emplear el entorno extendido de \LaTeX, la tabla se despliega a lo ancho de la página, evitando el solapamiento de texto o truncado de información.
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.48\textwidth]{images/grafico2_correlacion.pdf}
+    \caption{Matriz de correlación cruzada estandarizada entre la variable objetivo y las covariables clínicas seleccionadas.}
+    \label{fig:correlacion}
+\end{figure}
 
-\begin{table*}[t]
-\centering
-\small
-\caption{Especificación técnica y descripción del conjunto de variables seleccionadas (BRFSS 2023).}
-\label{tab:variables}
-\begin{tabular}{|l|l|p{11cm}|}
-\hline
-\textbf{Variable} & \textbf{Tipo de Dato} & \textbf{Descripción y Codificación en el Estudio} \\
-\hline
-\texttt{DIABETE4}  & Objetivo (Categórica) & Estado de diabetes autoreportado por el participante (Variable objetivo principal). \\
-\texttt{DIABTYPE}  & Categórica            & Tipo específico de diabetes diagnosticada (Registra un 94\% de valores condicionales nulos). \\
-\texttt{\_RFHYPE6} & Binaria               & Indicador de hipertensión arterial (Adultos que han recibido diagnóstico médico). \\
-\texttt{\_RFCHOL3} & Binaria               & Indicador de colesterol en sangre elevado según diagnóstico profesional. \\
-\texttt{\_CHOLCH3} & Categórica            & Control y chequeo regular del perfil lipídico dentro de los últimos 5 años. \\
-\texttt{\_BMI5}    & Numérica (Continua)   & Índice de Masa Corporal escalado (Valores enteros entre 1202 y 9984; IMC real $\times$ 100). \\
-\texttt{SMOKE100}  & Binaria               & Historial de tabaquismo (Indica si se han fumado al menos 100 cigarrillos en la vida). \\
-\texttt{CVDSTRK3}  & Binaria               & Antecedente clínico de haber sufrido un accidente cerebrovascular (Ictus). \\
-\texttt{\_MICHD}   & Binaria               & Reporte de infarto agudo de miocardio o enfermedad coronaria diagnosticada. \\
-\texttt{EXERANY2}  & Binaria               & Participación en actividades físicas o ejercicios de ocio durante el último mes. \\
-\texttt{PRIMINS1}  & Categórica            & Tipo o modalidad del seguro médico principal reportado por el encuestado. \\
-\texttt{MEDCOST1}  & Binaria               & Barreras económicas (Imposibilidad de consultar al médico por restricciones de costo). \\
-\texttt{GENHLTH}   & Ordinal               & Percepción subjetiva del estado general de salud (Escala cualitativa de 1 a 5). \\
-\texttt{MENTHLTH}  & Numérica (Discreta)   & Cantidad de días con afectación de la salud mental en los últimos 30 días. \\
-\texttt{PHYSHLTH}  & Numérica (Discreta)   & Cantidad de días con afectación de la salud física en los últimos 30 días. \\
-\texttt{DIFFWALK}  & Binaria               & Presencia de dificultad severa para caminar o subir tramos de escaleras. \\
-\texttt{\_SEX}     & Binaria               & Sexo biológico asignado al nacer del participante de la encuesta. \\
-\texttt{\_AGEG5YR} & Ordinal               & Clasificación del encuestado en grupos etarios estructurados de 5 años. \\
-\texttt{\_EDUCAG}  & Ordinal               & Máximo nivel educativo formal alcanzado por el individuo. \\
-\texttt{\_INCOMG1} & Ordinal               & Clasificación socioeconómica basada en la escala de ingresos del hogar. \\
-\hline
-\end{tabular}
-\end{table*}
+Finalmente, el examen de las características numéricas arroja información valiosa sobre los extremos distribucionales. En el caso del Índice de Masa Corporal (IMC), los valores atípicos extendidos hacia el límite superior no constituyen errores de registro, sino casos clínicos reales de obesidad mórbida. Como se ilustra en la estimación de densidad probabilística de la Figura \ref{fig:violin}, la subpoblación con diagnóstico de diabetes presenta una distribución del IMC fuertemente desplazada. Mientras que la concentración poblacional sana se agrupa en torno a un índice de 25, la cohorte diabética exhibe una mediana significativamente superior y una marcada concentración en las franjas correspondientes a la obesidad moderada y severa.
 
-\subsubsection{Comportamiento de las Distribuciones Muestrales}
-
-Los perfiles de distribución de las variables bajo estudio quedan de manifiesto a través del procesamiento estadístico de sus frecuencias. Al analizar el primer bloque de atributos clínicos, resalta la alta prevalencia de factores de riesgo concurrentes como la hipertensión (\texttt{\_RFHYPE6}) y la hipercolesterolemia (\texttt{\_RFCHOL3}) dentro de la población general, los cuales muestran una presencia masiva en los registros encuestados.
-
-Por otra parte, al evaluar los componentes conductuales y cardiovasculares, se observa que mientras los antecedentes de accidentes cerebrovasculares (\texttt{CVDSTRK3}) representan eventos de baja frecuencia relativa en la muestra global, las variables vinculadas al estilo de vida —tales como el sedentarismo (\texttt{EXERANY2}) y el tabaquismo crónico (\texttt{SMOKE100})— exhiben distribuciones notablemente heterogéneas. Estos factores interactúan directamente con la variabilidad del Índice de Masa Corporal (\texttt{\_BMI5}), consolidando la justificación teórica y empírica para la construcción de modelos multivariados basados en estas dimensiones para la clasificación final de la diabetes.
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.45\textwidth]{images/grafico3_violin.pdf}
+    \caption{Gráfico de violín que compara la estimación de densidad probabilística del Índice de Masa Corporal (IMC) según el diagnóstico clínico.}
+    \label{fig:violin}
+\end{figure}
 
 \subsection{Metodología Propuesta}
 % Describe detalladamente tu solución.
@@ -431,8 +407,44 @@ Finalmente, el rendimiento de cada modelo será evaluado mediante las métricas 
 
 
 \appendices
-\section{Proof of the First Zonklar Equation}
-Appendix one text goes here.
+\section{Diccionario de Variables del Dataset BRFSS 2023}
+\label{apendice:variables}
+
+A continuación, se detalla la especificación técnica de las 20 variables clínicas y socioeconómicas extraídas del \textit{Behavioral Risk Factor Surveillance System} utilizadas para el modelamiento.
+
+% PEGA TU TABLA AQUÍ
+\begin{table*}[t]
+\centering
+\small
+\caption{Especificación técnica y descripción del conjunto de variables seleccionadas (BRFSS 2023).}
+\label{tab:variables}
+\begin{tabular}{|l|l|p{11cm}|}
+\hline
+\textbf{Variable} & \textbf{Tipo de Dato} & \textbf{Descripción y Codificación en el Estudio} \\
+\hline
+\texttt{DIABETE4}  & Objetivo (Categórica) & Estado de diabetes autoreportado por el participante (Variable objetivo principal). \\
+\texttt{DIABTYPE}  & Categórica            & Tipo específico de diabetes diagnosticada (Registra un 94\% de valores condicionales nulos). \\
+\texttt{\_RFHYPE6} & Binaria               & Indicador de hipertensión arterial (Adultos que han recibido diagnóstico médico). \\
+\texttt{\_RFCHOL3} & Binaria               & Indicador de colesterol en sangre elevado según diagnóstico profesional. \\
+\texttt{\_CHOLCH3} & Categórica            & Control y chequeo regular del perfil lipídico dentro de los últimos 5 años. \\
+\texttt{\_BMI5}    & Numérica (Continua)   & Índice de Masa Corporal escalado (Valores enteros entre 1202 y 9984; IMC real $\times$ 100). \\
+\texttt{SMOKE100}  & Binaria               & Historial de tabaquismo (Indica si se han fumado al menos 100 cigarrillos en la vida). \\
+\texttt{CVDSTRK3}  & Binaria               & Antecedente clínico de haber sufrido un accidente cerebrovascular (Ictus). \\
+\texttt{\_MICHD}   & Binaria               & Reporte de infarto agudo de miocardio o enfermedad coronaria diagnosticada. \\
+\texttt{EXERANY2}  & Binaria               & Participación en actividades físicas o ejercicios de ocio durante el último mes. \\
+\texttt{PRIMINS1}  & Categórica            & Tipo o modalidad del seguro médico principal reportado por el encuestado. \\
+\texttt{MEDCOST1}  & Binaria               & Barreras económicas (Imposibilidad de consultar al médico por restricciones de costo). \\
+\texttt{GENHLTH}   & Ordinal               & Percepción subjetiva del estado general de salud (Escala cualitativa de 1 a 5). \\
+\texttt{MENTHLTH}  & Numérica (Discreta)   & Cantidad de días con afectación de la salud mental en los últimos 30 días. \\
+\texttt{PHYSHLTH}  & Numérica (Discreta)   & Cantidad de días con afectación de la salud física en los últimos 30 días. \\
+\texttt{DIFFWALK}  & Binaria               & Presencia de dificultad severa para caminar o subir tramos de escaleras. \\
+\texttt{\_SEX}     & Binaria               & Sexo biológico asignado al nacer del participante de la encuesta. \\
+\texttt{\_AGEG5YR} & Ordinal               & Clasificación del encuestado en grupos etarios estructurados de 5 años. \\
+\texttt{\_EDUCAG}  & Ordinal               & Máximo nivel educativo formal alcanzado por el individuo. \\
+\texttt{\_INCOMG1} & Ordinal               & Clasificación socioeconómica basada en la escala de ingresos del hogar. \\
+\hline
+\end{tabular}
+\end{table*}
 
 
 \section{}
@@ -464,7 +476,5 @@ Biography text here.
 Biography text here.
 \end{IEEEbiographynophoto}
 
-
 % that's all folks
 \end{document}
-
